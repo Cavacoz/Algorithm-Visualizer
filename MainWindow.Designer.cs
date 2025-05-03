@@ -76,7 +76,7 @@
             this.Controls.Add(this.selectButton);
             this.Name = "MainWindow";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Form1";
+            this.Text = "Algorithm Visualizer";
             this.ResumeLayout(false);
 
         }

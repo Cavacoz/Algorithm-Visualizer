@@ -77,16 +77,16 @@ namespace AlgorithmVisualizer
                         g.FillRectangle(Brushes.Green, x, y, barWidth, height);
                     else
                         g.FillRectangle(Brushes.Blue, x, y, barWidth, height);
-
-                    // make it paint green when its finished
                 }
-                if (this.Text == "Merge Sort")
+                else
+                {
                     if (i >= currentIndexLeft && i < currentIndexRight)
                         g.FillRectangle(Brushes.Red, x, y, barWidth, height);
                     else if (isSorted)
                         g.FillRectangle(Brushes.Green, x, y, barWidth, height);
                     else
                         g.FillRectangle(Brushes.Blue, x, y, barWidth, height);
+                }
             }
             Invalidate();
         }
@@ -189,8 +189,6 @@ namespace AlgorithmVisualizer
             mergedArray.AddRange(leftArray.Skip(i));
             mergedArray.AddRange(rightArray.Skip(j));
 
-            // this part needs to be fixed its correct but should be in the correct indexes of the original array.
-            //int n = leftArray.Length + rightArray.Length;
             currentIndexLeft = startingPaintIndex;
             currentIndexRight = startingPaintIndex + mergedArray.Count;
 

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BubbleSortVisualization;
 
 namespace AlgorithmVisualizer
 {
@@ -21,8 +22,21 @@ namespace AlgorithmVisualizer
 
         private void selectButton_Click(object sender, EventArgs e)
         {
-            SortAlgorithm algorithmWindow = new SortAlgorithm(listBox1.SelectedItem as string);
-            algorithmWindow.Show();
+            switch (comboBox1.SelectedIndex)
+            {
+                case 0:
+                    SortAlgorithm sortAlgorithmWindow = new SortAlgorithm(listBox1.SelectedItem as string);
+                    sortAlgorithmWindow.Show();
+                    break;
+                case 1:
+                    SearchAlgorithm searchAlgorithmWindow = new SearchAlgorithm(listBox1.SelectedItem as string);
+                    searchAlgorithmWindow.Show();
+                    break;
+                case 2:
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -34,7 +48,7 @@ namespace AlgorithmVisualizer
                     listBox1.Items.AddRange(new string[] { "Bubble Sort", "Merge Sort" });
                     break;
                 case 1:
-                    listBox1.Items.AddRange(new string[] { "Binary Search" });
+                    listBox1.Items.AddRange(new string[] { "Binary Search", "" });
                     break;
                 case 2:
                     listBox1.Items.AddRange(new string[] { "A*" });
