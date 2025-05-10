@@ -48,7 +48,7 @@ namespace AlgorithmVisualizer
                     listBox1.Items.AddRange(new string[] { "Bubble Sort", "Merge Sort" });
                     break;
                 case 1:
-                    listBox1.Items.AddRange(new string[] { "Binary Search", "" });
+                    listBox1.Items.AddRange(new string[] { "Binary Search", "Depth First Search" });
                     break;
                 case 2:
                     listBox1.Items.AddRange(new string[] { "A*" });
