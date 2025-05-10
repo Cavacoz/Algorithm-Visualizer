@@ -1,24 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BubbleSortVisualization
 {
-    public class GraphNode
-    {
-        public string Label;
-        public Point Position;
-        public List<GraphNode> Neighbors = new List<GraphNode>();
-    }
-
-
     public partial class SearchAlgorithm : Form
     {
 
@@ -87,10 +74,9 @@ namespace BubbleSortVisualization
         private void Algorithm_Paint(object sender, PaintEventArgs e)
         {
 
+            Graphics g = e.Graphics;
             if(this.Text == "Binary Search")
             {
-
-                Graphics g = e.Graphics;
                 int barCount = barArray.Length;
                 float drawableWidth = Size.Width - 2 * windowPadding;
                 float barWidth = drawableWidth / (barCount + (barCount - 1) * gapRatio);
@@ -124,7 +110,6 @@ namespace BubbleSortVisualization
             }
             else
             {
-                Graphics g = e.Graphics;
                 var pen = Pens.Black;
                 var font = new Font("Arial", 10);
                 var brush = Brushes.LightBlue;
