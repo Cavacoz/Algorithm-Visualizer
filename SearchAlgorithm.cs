@@ -47,7 +47,6 @@ namespace BubbleSortVisualization
         }
         private void GenerateValuesValues()
         {
-
             if (this.Text == "Binary Search")
             {
                 isFound = false;
@@ -56,18 +55,16 @@ namespace BubbleSortVisualization
                 {
                     barArray[i] = random.Next((int)numericMin.Value, (int)numericMax.Value);
                 }
-
                 // The array must be already sorted. We use the Array.Sort(); because we already demonstrated we could sort the Arrays before.
                 Array.Sort(barArray);
             }
             else
             {
-
+                isFound = false;
                 treeRoot = null;
                 int count = (int)numericBars.Value;
                 int min = (int)numericMin.Value;
                 int max = (int)numericMax.Value;
-
 
                 if(max-min < count)
                 {
@@ -75,35 +72,28 @@ namespace BubbleSortVisualization
                 }
                 else
                 {
-                    // Generate a list of random values within the min and max range, ensuring exactly 'count' nodes
                     List<int> values = new List<int>();
 
-                    // Generate random values
                     while (values.Count < count)
                     {
                         int randomValue = random.Next(min, max+1);
                         while (values.Contains(randomValue))
                             randomValue = random.Next(min, max+1);
-                        //if (!values.Contains(randomValue)) // Ensure uniqueness
+
                         values.Add(randomValue);
                     }
 
-                    // Shuffle the values to make the tree more dynamic (optional)
-                    //values = values.OrderBy(x => random.Next()).ToList(); // Optional
                     values.Sort();
 
                     // Build a balanced tree using the random values
                     treeRoot = BuildBalancedTree(values, 0, values.Count - 1);
 
-                    // Position nodes based on the tree structure
-                    //int spacing = Math.Max(40, this.Width / ((int)Math.Pow(2, Math.Ceiling(Math.Log(count + 1, 2)))));
                     AssignNodePositions(treeRoot, this.Width / 2, 50, 175);
                 }
             }
             Invalidate();
         }
 
-        // Helper method to build a balanced binary tree
         private TreeNode BuildBalancedTree(List<int> values, int start, int end)
         {
             if (start > end) return null;
@@ -126,8 +116,6 @@ namespace BubbleSortVisualization
             AssignNodePositions(node.Left, x - xSpacing, y + 60, xSpacing / 2);
             AssignNodePositions(node.Right, x + xSpacing, y + 60, xSpacing / 2);
         }
-
-
         private void Algorithm_Paint(object sender, PaintEventArgs e)
         {
 
@@ -158,7 +146,6 @@ namespace BubbleSortVisualization
                 DrawTree(e.Graphics, treeRoot);
             }
         }
-
         private void DrawTree(Graphics g, TreeNode node)
         {
             if (node == null) return;
@@ -184,19 +171,6 @@ namespace BubbleSortVisualization
             g.FillEllipse(brush, rect);
             g.DrawEllipse(pen, rect);
             g.DrawString(node.Value.ToString(), font, textBrush, node.Position.X - 8, node.Position.Y - 8);
-        }
-
-        private TreeNode InsertOrdered(TreeNode root, int value)
-        {
-            if (root == null)
-                return new TreeNode(value);
-
-            if (value < root.Value)
-                root.Left = InsertOrdered(root.Left, value);
-            else
-                root.Right = InsertOrdered(root.Right, value);
-
-            return root;
         }
 
         private async void searchButton_Click(object sender, EventArgs e)
@@ -253,7 +227,25 @@ namespace BubbleSortVisualization
 
         private async Task DepthFirstSearch()
         {
-            await Task.Delay(100);
+            while(treeRoot.Left != null || treeRoot.Right != null)
+            {
+                if (treeRoot.Value == numberToSearch.Value)
+                {
+                    isFound = true;
+                    break;
+                }
+
+                if(numberToSearch.Value < treeRoot.Value)
+                {
+                    treeRoot = treeRoot.Left;
+                }
+                else
+                {
+                    treeRoot = treeRoot.Right;
+                }
+                await Task.Delay(200);
+                Invalidate();
+            }
         }
     }
 }
