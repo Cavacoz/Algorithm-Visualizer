@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 
 namespace BubbleSortVisualization
 {
@@ -11,7 +13,7 @@ namespace BubbleSortVisualization
 
         private int[] barArray;
 
-        private List<GraphNode> nodes;
+        private TreeNode treeRoot;
 
         private Random random = new Random();
         private readonly int windowPadding = 10;
@@ -26,8 +28,8 @@ namespace BubbleSortVisualization
         public SearchAlgorithm(string algorithmName)
         {
             InitializeComponent();
-
             this.Text = algorithmName;
+            if (algorithmName != "Binary Search") numericBars.Maximum = 31;
         }
         private void generateButton_Click(object sender, EventArgs e)
         {
@@ -37,12 +39,13 @@ namespace BubbleSortVisualization
             }
             else
             {
-                GenerateArrayValues();
+                GenerateValuesValues();
                 this.DoubleBuffered = true;
                 this.Paint += new PaintEventHandler(Algorithm_Paint);
+                //Invalidate();
             }
         }
-        private void GenerateArrayValues()
+        private void GenerateValuesValues()
         {
 
             if (this.Text == "Binary Search")
@@ -59,17 +62,71 @@ namespace BubbleSortVisualization
             }
             else
             {
-                var a = new GraphNode { Label = "A", Position = new Point(100, 100) };
-                var b = new GraphNode { Label = "B", Position = new Point(200, 150) };
-                var c = new GraphNode { Label = "C", Position = new Point(150, 250) };
 
-                a.Neighbors.Add(b);
-                b.Neighbors.Add(c);
-                c.Neighbors.Add(a);
+                treeRoot = null;
+                int count = (int)numericBars.Value;
+                int min = (int)numericMin.Value;
+                int max = (int)numericMax.Value;
 
-                nodes = new List<GraphNode> { a, b, c };
+
+                if(max-min < count)
+                {
+                    MessageBox.Show("The difference between max number and min must be equal or higher than the number of nodes.", "Invalid number.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else
+                {
+                    // Generate a list of random values within the min and max range, ensuring exactly 'count' nodes
+                    List<int> values = new List<int>();
+
+                    // Generate random values
+                    while (values.Count < count)
+                    {
+                        int randomValue = random.Next(min, max+1);
+                        while (values.Contains(randomValue))
+                            randomValue = random.Next(min, max+1);
+                        //if (!values.Contains(randomValue)) // Ensure uniqueness
+                        values.Add(randomValue);
+                    }
+
+                    // Shuffle the values to make the tree more dynamic (optional)
+                    //values = values.OrderBy(x => random.Next()).ToList(); // Optional
+                    values.Sort();
+
+                    // Build a balanced tree using the random values
+                    treeRoot = BuildBalancedTree(values, 0, values.Count - 1);
+
+                    // Position nodes based on the tree structure
+                    //int spacing = Math.Max(40, this.Width / ((int)Math.Pow(2, Math.Ceiling(Math.Log(count + 1, 2)))));
+                    AssignNodePositions(treeRoot, this.Width / 2, 50, 175);
+                }
             }
+            Invalidate();
         }
+
+        // Helper method to build a balanced binary tree
+        private TreeNode BuildBalancedTree(List<int> values, int start, int end)
+        {
+            if (start > end) return null;
+
+            int mid = (start + end) / 2;
+            TreeNode node = new TreeNode(values[mid]);
+
+            // Recursively build the left and right subtrees
+            node.Left = BuildBalancedTree(values, start, mid - 1);
+            node.Right = BuildBalancedTree(values, mid + 1, end);
+
+            return node;
+        }
+
+        private void AssignNodePositions(TreeNode node, int x, int y, int xSpacing)
+        {
+            if (node == null) return;
+
+            node.Position = new Point(x, y);
+            AssignNodePositions(node.Left, x - xSpacing, y + 60, xSpacing / 2);
+            AssignNodePositions(node.Right, x + xSpacing, y + 60, xSpacing / 2);
+        }
+
 
         private void Algorithm_Paint(object sender, PaintEventArgs e)
         {
@@ -88,52 +145,58 @@ namespace BubbleSortVisualization
                     float y = 300 - barArray[i];
                     float height = barArray[i];
 
-                    if (this.Text == "Binary Search")
-                    {
-                        if (i == currentIndexLeft || i == currentIndexRight)
-                            g.FillRectangle(Brushes.Red, x, y, barWidth, height);
-                        else if (isFound && i == indexFound)
-                            g.FillRectangle(Brushes.Green, x, y, barWidth, height);
-                        else
-                            g.FillRectangle(Brushes.Blue, x, y, barWidth, height);
-                    }
+                    if (i == currentIndexLeft || i == currentIndexRight)
+                        g.FillRectangle(Brushes.Red, x, y, barWidth, height);
+                    else if (isFound && i == indexFound)
+                        g.FillRectangle(Brushes.Green, x, y, barWidth, height);
                     else
-                    {
-                        //if (i >= currentIndexLeft && i < currentIndexRight)
-                        //    g.FillRectangle(Brushes.Red, x, y, barWidth, height);
-                        //else if (isFound)
-                        //    g.FillRectangle(Brushes.Green, x, y, barWidth, height);
-                        //else
-                        //    g.FillRectangle(Brushes.Blue, x, y, barWidth, height);
-                    }
+                        g.FillRectangle(Brushes.Blue, x, y, barWidth, height);
                 }
             }
             else
             {
-                var pen = Pens.Black;
-                var font = new Font("Arial", 10);
-                var brush = Brushes.LightBlue;
-                var textBrush = Brushes.Black;
-
-                // Draw edges
-                foreach (var node in nodes)
-                {
-                    foreach (var neighbor in node.Neighbors)
-                    {
-                        g.DrawLine(pen, node.Position, neighbor.Position);
-                    }
-                }
-
-                // Draw nodes
-                foreach (var node in nodes)
-                {
-                    var rect = new Rectangle(node.Position.X - 15, node.Position.Y - 15, 30, 30);
-                    g.FillEllipse(brush, rect);
-                    g.DrawEllipse(pen, rect);
-                    g.DrawString(node.Label, font, textBrush, node.Position.X - 8, node.Position.Y - 8);
-                }
+                DrawTree(e.Graphics, treeRoot);
             }
-                Invalidate();
+        }
+
+        private void DrawTree(Graphics g, TreeNode node)
+        {
+            if (node == null) return;
+
+            var pen = Pens.Black;
+            var brush = Brushes.LightBlue;
+            var textBrush = Brushes.Black;
+            var font = new Font("Arial", 10);
+
+            if (node.Left != null)
+            {
+                g.DrawLine(pen, node.Position, node.Left.Position);
+                DrawTree(g, node.Left);
+            }
+
+            if (node.Right != null)
+            {
+                g.DrawLine(pen, node.Position, node.Right.Position);
+                DrawTree(g, node.Right);
+            }
+
+            var rect = new Rectangle(node.Position.X - 15, node.Position.Y - 15, 30, 30);
+            g.FillEllipse(brush, rect);
+            g.DrawEllipse(pen, rect);
+            g.DrawString(node.Value.ToString(), font, textBrush, node.Position.X - 8, node.Position.Y - 8);
+        }
+
+        private TreeNode InsertOrdered(TreeNode root, int value)
+        {
+            if (root == null)
+                return new TreeNode(value);
+
+            if (value < root.Value)
+                root.Left = InsertOrdered(root.Left, value);
+            else
+                root.Right = InsertOrdered(root.Right, value);
+
+            return root;
         }
 
         private async void searchButton_Click(object sender, EventArgs e)
@@ -147,7 +210,7 @@ namespace BubbleSortVisualization
             }
             else
             {
-
+                await DepthFirstSearch();
             }
 
             generateButton.Enabled = true;
@@ -186,6 +249,11 @@ namespace BubbleSortVisualization
             }
             currentIndexLeft = -1;
             currentIndexRight = -1;
+        }
+
+        private async Task DepthFirstSearch()
+        {
+            await Task.Delay(100);
         }
     }
 }

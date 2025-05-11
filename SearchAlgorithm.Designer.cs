@@ -49,9 +49,9 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(297, 339);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(49, 13);
+            this.label3.Size = new System.Drawing.Size(85, 13);
             this.label3.TabIndex = 16;
-            this.label3.Text = "# of bars";
+            this.label3.Text = "# of bars/Nodes";
             // 
             // label2
             // 
@@ -198,6 +198,9 @@
             this.Controls.Add(this.numericBars);
             this.Controls.Add(this.numericMax);
             this.Controls.Add(this.numericMin);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "SearchAlgorithm";
             this.Text = "SearchAlgorithm";
             ((System.ComponentModel.ISupportInitialize)(this.numericBars)).EndInit();

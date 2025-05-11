@@ -46,7 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GraphNode.cs" />
+    <Compile Include="TreeNode.cs" />
     <Compile Include="SortAlgorithm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -28,6 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.numericMin = new System.Windows.Forms.NumericUpDown();
             this.numericMax = new System.Windows.Forms.NumericUpDown();
             this.numericBars = new System.Windows.Forms.NumericUpDown();
