@@ -14,9 +14,11 @@ namespace BubbleSortVisualization
         public TreeNode Right;
         public Point Position; // For visualization
 
-        public TreeNode(int value)
+        public TreeNode(int val = 0, TreeNode left = null, TreeNode right = null)
         {
-            Value = value;
+            Value = val;
+            Left = left;
+            Right = right;
         }
     }
 }

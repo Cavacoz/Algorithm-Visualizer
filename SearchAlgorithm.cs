@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
@@ -24,6 +25,8 @@ namespace BubbleSortVisualization
         private int currentIndexLeft = -1;
         private int currentIndexRight = -1;
         private int indexFound = -1;
+
+        private Point currentPoint = new Point();
 
         public SearchAlgorithm(string algorithmName)
         {
@@ -112,6 +115,8 @@ namespace BubbleSortVisualization
         {
             if (node == null) return;
 
+            currentPoint = new Point();
+
             node.Position = new Point(x, y);
             AssignNodePositions(node.Left, x - xSpacing, y + 60, xSpacing / 2);
             AssignNodePositions(node.Right, x + xSpacing, y + 60, xSpacing / 2);
@@ -149,11 +154,15 @@ namespace BubbleSortVisualization
         private void DrawTree(Graphics g, TreeNode node)
         {
             if (node == null) return;
-
+                    
             var pen = Pens.Black;
             var brush = Brushes.LightBlue;
             var textBrush = Brushes.Black;
             var font = new Font("Arial", 10);
+
+            var currentPointBrush = Brushes.Red;
+            
+
 
             if (node.Left != null)
             {
@@ -166,11 +175,22 @@ namespace BubbleSortVisualization
                 g.DrawLine(pen, node.Position, node.Right.Position);
                 DrawTree(g, node.Right);
             }
+            if (currentPoint == node.Position)
+            {
+                var currentNode = new Rectangle(node.Position.X - 15, node.Position.Y - 15, 30, 30);
+                g.FillEllipse(currentPointBrush, currentNode);
+                g.DrawEllipse(pen, currentNode);
+                g.DrawString(node.Value.ToString(), font, textBrush, node.Position.X - 8, node.Position.Y - 8);
+            }
+            else
+            {
+                var rect = new Rectangle(node.Position.X - 15, node.Position.Y - 15, 30, 30);
+                g.FillEllipse(brush, rect);
+                g.DrawEllipse(pen, rect);
+                g.DrawString(node.Value.ToString(), font, textBrush, node.Position.X - 8, node.Position.Y - 8);
 
-            var rect = new Rectangle(node.Position.X - 15, node.Position.Y - 15, 30, 30);
-            g.FillEllipse(brush, rect);
-            g.DrawEllipse(pen, rect);
-            g.DrawString(node.Value.ToString(), font, textBrush, node.Position.X - 8, node.Position.Y - 8);
+            }
+                //Invalidate();
         }
 
         private async void searchButton_Click(object sender, EventArgs e)
@@ -227,23 +247,38 @@ namespace BubbleSortVisualization
 
         private async Task DepthFirstSearch()
         {
-            while(treeRoot.Left != null || treeRoot.Right != null)
-            {
-                if (treeRoot.Value == numberToSearch.Value)
-                {
-                    isFound = true;
-                    break;
-                }
+            List<int> order = new List<int>();
 
-                if(numberToSearch.Value < treeRoot.Value)
-                {
-                    treeRoot = treeRoot.Left;
-                }
-                else
-                {
-                    treeRoot = treeRoot.Right;
-                }
-                await Task.Delay(200);
+            if (treeRoot != null)
+            {
+                currentPoint = treeRoot.Position;
+                await IterateBinaryTree(treeRoot, order);
+            }
+            
+            string result = string.Join("->", order);
+
+            MessageBox.Show(result, "Inorder Traversal DFS", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        }
+
+        public async Task IterateBinaryTree(TreeNode node, List<int> order)
+        {
+            // FIX THIS its not iterating every node.
+            if (node.Left != null)
+            {
+                currentPoint = node.Left.Position;
+                await IterateBinaryTree(node.Left, order);
+                await Task.Delay(100);
+                Invalidate();
+            }
+
+            order.Add(node.Value);
+
+            if (node.Right != null)
+            {
+                currentPoint = node.Right.Position;
+                await IterateBinaryTree(node.Right, order);
+                await Task.Delay(100);
                 Invalidate();
             }
         }
