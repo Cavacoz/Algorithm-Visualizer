@@ -247,39 +247,48 @@ namespace BubbleSortVisualization
 
         private async Task DepthFirstSearch()
         {
-            List<int> order = new List<int>();
+            List<TreeNode> order = new List<TreeNode>();
 
             if (treeRoot != null)
             {
-                currentPoint = treeRoot.Position;
+                //currentPoint = treeRoot.Position;
+                //Invalidate();
+                //await Task.Delay(100);
                 await IterateBinaryTree(treeRoot, order);
             }
-            
-            string result = string.Join("->", order);
+            StringBuilder sb = new StringBuilder();
+            foreach(TreeNode tn in order)
+            {
+                sb.Append(tn.Value.ToString() + "->");
+                currentPoint = tn.Position;
+                Invalidate();
+                await Task.Delay(200);
+            }
+            sb.Remove(sb.Length - 2, 2);
 
-            MessageBox.Show(result, "Inorder Traversal DFS", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(sb.ToString(), "Inorder Traversal DFS", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
         }
 
-        public async Task IterateBinaryTree(TreeNode node, List<int> order)
+        public async Task IterateBinaryTree(TreeNode node, List<TreeNode> order)
         {
             // FIX THIS its not iterating every node.
             if (node.Left != null)
             {
                 currentPoint = node.Left.Position;
+                //Invalidate();
+                //await Task.Delay(100);
                 await IterateBinaryTree(node.Left, order);
-                await Task.Delay(100);
-                Invalidate();
             }
 
-            order.Add(node.Value);
+            order.Add(node);
 
             if (node.Right != null)
             {
                 currentPoint = node.Right.Position;
+                //Invalidate();
+                //await Task.Delay(100);
                 await IterateBinaryTree(node.Right, order);
-                await Task.Delay(100);
-                Invalidate();
             }
         }
     }
