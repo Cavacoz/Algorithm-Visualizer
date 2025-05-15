@@ -32,7 +32,14 @@ namespace BubbleSortVisualization
         {
             InitializeComponent();
             this.Text = algorithmName;
-            if (algorithmName != "Binary Search") numericBars.Maximum = 31;
+            if (algorithmName != "Binary Search")
+            {
+                // It's not used for the Depth First Search.
+                numberToSearch.Enabled = false;
+                // Max number of nodes so tree can be visualized correctly.
+                numericBars.Maximum = 31;
+                searchButton.Text = "Traverse";
+            }
         }
         private void generateButton_Click(object sender, EventArgs e)
         {
