@@ -131,33 +131,39 @@ namespace BubbleSortVisualization
         private void Algorithm_Paint(object sender, PaintEventArgs e)
         {
 
-            Graphics g = e.Graphics;
+            //Graphics g = e.Graphics;
             if(this.Text == "Binary Search")
             {
-                int barCount = barArray.Length;
-                float drawableWidth = Size.Width - 2 * windowPadding;
-                float barWidth = drawableWidth / (barCount + (barCount - 1) * gapRatio);
-                float gapWidth = barWidth * gapRatio;
-
-                for (int i = 0; i < barArray.Length; i++)
-                {
-                    float x = 2 + i * (barWidth + gapWidth);
-                    float y = 300 - barArray[i];
-                    float height = barArray[i];
-
-                    if (i == currentIndexLeft || i == currentIndexRight)
-                        g.FillRectangle(Brushes.Red, x, y, barWidth, height);
-                    else if (isFound && i == indexFound)
-                        g.FillRectangle(Brushes.Green, x, y, barWidth, height);
-                    else
-                        g.FillRectangle(Brushes.Blue, x, y, barWidth, height);
-                }
+                DrawBars(e.Graphics, barArray);
             }
             else
             {
                 DrawTree(e.Graphics, treeRoot);
             }
         }
+
+        private void DrawBars(Graphics g, int[] barArray)
+        {
+            int barCount = barArray.Length;
+            float drawableWidth = Size.Width - 2 * windowPadding;
+            float barWidth = drawableWidth / (barCount + (barCount - 1) * gapRatio);
+            float gapWidth = barWidth * gapRatio;
+
+            for (int i = 0; i < barArray.Length; i++)
+            {
+                float x = 2 + i * (barWidth + gapWidth);
+                float y = 300 - barArray[i];
+                float height = barArray[i];
+
+                if (i == currentIndexLeft || i == currentIndexRight)
+                    g.FillRectangle(Brushes.Red, x, y, barWidth, height);
+                else if (isFound && i == indexFound)
+                    g.FillRectangle(Brushes.Green, x, y, barWidth, height);
+                else
+                    g.FillRectangle(Brushes.Blue, x, y, barWidth, height);
+            }
+        }
+
         private void DrawTree(Graphics g, TreeNode node)
         {
             if (node == null) return;
